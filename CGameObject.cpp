@@ -8,41 +8,25 @@ void CGameObject::set_pos(cv::Point2f pos)
 	pos.y -= 50;
 	pos.y *= -1;
 
+	float magnitude = sqrt(pos.x * pos.x + pos.y * pos.y);
 
 	//Stabalize at origin
 	if (pos.x > 2 || pos.x < -2)
 	{
+		_facing_direction.x = pos.x / magnitude;
 		_position.x += pos.x / 5;
 	}
 
 	if (pos.y > 2 || pos.y < -2)
 	{
+		_facing_direction.y = pos.y / magnitude;
 		_position.y += pos.y / 5;
 	}	
 }
 
-cv::Point2f CGameObject::get_direction(cv::Point2f direction)
+cv::Point2f CGameObject::get_direction()
 {
-	direction.x -= 50;
-	direction.y -= 50;
-	direction.y *= -1;
-
-	float magnitude = sqrt(direction.x * direction.x + direction.y * direction.y);
-	//Stabalize at origin
-	if (direction.x > 2 || direction.x < -2)
-	{
-		_facing_direction.x = direction.x/magnitude;
-	}
-
-	if (direction.y > 2 || direction.y < -2)
-	{
-		_facing_direction.y /= direction.y/magnitude;
-	}
-
 	return _facing_direction;
-
-
-
 }
 
 void CGameObject::set_missile_pos(cv::Point2f pos)
@@ -91,5 +75,25 @@ void CGameObject::wrap_wall(cv::Size board)
 void CGameObject::set_velocity(cv::Point2f vel)
 {
 	_velocity = vel;
+}
+
+bool CGameObject::collide(CGameObject& obj)
+{
+	// Calculate distance between two objects
+	cv::Point2f diff = _position - obj._position;
+	float distance = sqrt(diff.x * diff.x + diff.y * diff.y);
+
+	// Check if distance is less than sum of radii
+	return distance < (_radius + obj._radius);
+}
+
+void CGameObject::hit()
+{
+	_lives--;
+}
+
+int CGameObject::get_lives()
+{
+	return _lives;
 }
 

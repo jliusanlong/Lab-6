@@ -8,15 +8,23 @@ class CGameObject
 public:
 	void move();
 	cv::Point2f get_pos();
-	//bool collide(CGameObject &obj);
+
+
+	bool collide(CGameObject &obj);
 	bool collide_wall(cv::Size board);
 	void wrap_wall(cv::Size board);
-	//void hit();
+
+
+	void hit();
+	int get_lives();
+
+
 	void set_velocity(cv::Point2f vel);
 	void set_pos(cv::Point2f pos);
 	void set_missile_pos(cv::Point2f pos);
 
-	cv::Point2f get_direction(cv::Point2f direction);
+	
+	cv::Point2f get_direction();
 	
 	
 

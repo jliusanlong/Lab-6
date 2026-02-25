@@ -7,4 +7,6 @@ public:
 	CShip();
 	CShip(int _size, int _lives);
 	~CShip();
+
+
 };

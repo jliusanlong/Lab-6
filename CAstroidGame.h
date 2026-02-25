@@ -33,4 +33,10 @@ protected:
 	CAstroid _astroid;
 	std::vector<CAstroid> _astroids; ///< List of astroids in the game
 	std::vector<CMissile> _missiles; ///< List of missiles fired by the ship
+
+private:
+	int _score = 0;
+
+	int _invincibility_timer = 0;
+	void reset_game();
 };

@@ -8,6 +8,8 @@ class CAstroid : public CGameObject
 	CAstroid(int _size, cv::Point2f _intitalPosition, cv::Point2f _initialVelocity);
 	~CAstroid();
 
+	void ensure_safe_spawn(cv::Point2f ship_pos, float min_distance);
+
 protected:
 	int _size;
 	cv::Point2i _initialPosition;

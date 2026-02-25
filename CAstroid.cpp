@@ -29,3 +29,24 @@ CAstroid::CAstroid()
 CAstroid::~CAstroid()
 {
 }
+
+void CAstroid::ensure_safe_spawn(cv::Point2f ship_pos, float min_distance)
+{
+	// Regenerate position until it's far enough from ship
+	int attempts = 0;
+	while (attempts < 100)  // Limit attempts to prevent infinite loop
+	{
+		cv::Point2f diff = _position - ship_pos;
+		float distance = sqrt(diff.x * diff.x + diff.y * diff.y);
+
+		if (distance >= min_distance)
+		{
+			break;  // Position is safe
+		}
+
+		// Regenerate position
+		_position.x = rand() % 1000;
+		_position.y = rand() % 750;
+		attempts++;
+	}
+}
