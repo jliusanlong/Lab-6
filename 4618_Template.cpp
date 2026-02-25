@@ -24,6 +24,7 @@
 #include "CBase4618.h"
 #include "CSketch.h"
 #include "CPong.h"
+#include "CAstroidGame.h"
 
 
 #define REDLED 39
@@ -457,6 +458,8 @@ void lab5()
 ////////////////////////////////////////////////////////////////
 void lab6()
 {
+	CAstroidGame astroidGame(3, 750, 1000);
+    astroidGame.run();
 }
 
 
