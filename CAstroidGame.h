@@ -39,4 +39,7 @@ private:
 
 	int _invincibility_timer = 0;
 	void reset_game();
+
+	int _asteroid_spawn_timer = 0;
+	const int ASTEROID_SPAWN_INTERVAL = 100;  
 };

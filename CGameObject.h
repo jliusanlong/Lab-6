@@ -23,6 +23,10 @@ public:
 	void set_pos(cv::Point2f pos);
 	void set_missile_pos(cv::Point2f pos);
 
+	void apply_thrust(cv::Point2f direction);
+	void apply_drag();
+	bool is_thrusting() const;
+
 	
 	cv::Point2f get_direction();
 	
@@ -36,8 +40,15 @@ protected:
 	cv::Scalar _color = { 255,255,255 };
 
 	cv::Point2f _velocity;
+
+	cv::Point2f _acceleration;  // Add this
+	float _drag = 0.98f;  // Add this - friction/drag coefficient
+
 	int _radius;
 	int _lives;
+
+	bool _thrusting = false;  // Add this - track if thrust is acti
+
 
 
 };

@@ -11,3 +11,9 @@ CMissile::CMissile()
 CMissile::~CMissile()
 {
 }
+
+void CMissile::move()
+{
+	// Missiles move without speed cap or acceleration
+	_position += _velocity;
+}

@@ -53,8 +53,8 @@ void CAstroidGame::update()
 	////////////////////////
 
 	_ship.set_pos(_joystick);
-
-
+	_ship.apply_drag();  // Add this - apply drag every frame
+	_ship.move();  // Add this - update ship position with inertia
 
 
 	_ship.wrap_wall(cv::Size(1000, 750));
@@ -84,10 +84,12 @@ void CAstroidGame::update()
 				_invincibility_timer = 45;
 				astroid_it = _astroids.erase(astroid_it);
 
+				/*
 				// Spawn new asteroid safely
 				CAstroid new_astroid;
 				new_astroid.ensure_safe_spawn(_ship.get_pos(), 150.0f);
 				_astroids.push_back(new_astroid);
+				*/
 				break;
 			}
 			else
@@ -107,7 +109,9 @@ void CAstroidGame::update()
 	{
 		_missiles.push_back(CMissile());
 		_missiles.back().set_missile_pos(_ship.get_pos());
-		_missiles.back().set_velocity (_ship.get_direction() * 10.0f);
+		_missiles.back().set_velocity (_ship.get_direction() * 40.0f);
+
+		std::cout << "Missile fired!" << std::endl;
 	}
 	for (auto& missile : _missiles)
 	{
@@ -127,12 +131,12 @@ void CAstroidGame::update()
 				// Collision detected!
 				_score += 10;
 				astroid_it = _astroids.erase(astroid_it);  // Remove asteroid
-
+				/*
 				// Spawn new asteroid safely
 				CAstroid new_astroid;
 				new_astroid.ensure_safe_spawn(_ship.get_pos(), 150.0f);
 				_astroids.push_back(new_astroid);
-
+				*/
 				missile_hit = true;
 				break;  // Missile can only hit one asteroid
 			}
@@ -163,6 +167,18 @@ void CAstroidGame::update()
 
 
 
+	// Asteroid spawn timer - spawn one every 5 seconds
+	_asteroid_spawn_timer++;
+	if (_asteroid_spawn_timer >= ASTEROID_SPAWN_INTERVAL)
+	{
+		_asteroid_spawn_timer = 0;  // Reset timer
+		CAstroid new_astroid;
+		new_astroid.ensure_safe_spawn(_ship.get_pos(), 150.0f);
+		_astroids.push_back(new_astroid);
+	}
+
+
+
 	
 
 
@@ -189,6 +205,19 @@ void CAstroidGame::draw()
 	if (_invincibility_timer == 0 || (_invincibility_timer / 3) % 2 == 0)
 	{
 		_ship.draw(_canvas);
+
+		// Draw thrust indicator (red circle at back) when thrusting
+		if (_ship.is_thrusting())
+		{
+			cv::Point2f ship_pos = _ship.get_pos();
+			cv::Point2f facing = _ship.get_direction();
+
+			// Position thrust indicator behind the ship
+			cv::Point2f thrust_pos = ship_pos - (facing * 25.0f);  // 25 pixels behind
+
+			// Draw red circle for thrust
+			cv::circle(_canvas, thrust_pos, 8, cv::Scalar(0, 0, 255), -1);  // Filled red circle
+		}
 	}
 
 	for (auto& astroid : _astroids)
@@ -271,6 +300,7 @@ void CAstroidGame::reset_game()
 	// Reset game state
 	_score = 0;
 	_invincibility_timer = 0;
+	_asteroid_spawn_timer = 0;  // Reset spawn timer
 
 	// Reset timer
 	start_tic = cv::getTickCount();

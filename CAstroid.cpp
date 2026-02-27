@@ -17,10 +17,10 @@ CAstroid::CAstroid()
 	_color = cv::Scalar( rand() % 256, rand() % 256, rand() % 256 );
 
 
-	_initialVelocity.x = -5 + rand() % 11;
+	_initialVelocity.x = -10 + rand() % 21;
 	_velocity.x = _initialVelocity.x;
 
-	_initialVelocity.y = -5 + rand() % 11;
+	_initialVelocity.y = -10 + rand() % 21;
 	_velocity.y = _initialVelocity.y;
 
 

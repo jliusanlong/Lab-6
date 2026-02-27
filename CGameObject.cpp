@@ -8,6 +8,11 @@ void CGameObject::set_pos(cv::Point2f pos)
 	pos.y -= 50;
 	pos.y *= -1;
 
+
+	// Apply thrust based on joystick input
+	apply_thrust(pos);
+
+	/*
 	float magnitude = sqrt(pos.x * pos.x + pos.y * pos.y);
 
 	//Stabalize at origin
@@ -22,6 +27,7 @@ void CGameObject::set_pos(cv::Point2f pos)
 		_facing_direction.y = pos.y / magnitude;
 		_position.y += pos.y / 5;
 	}	
+	*/
 }
 
 cv::Point2f CGameObject::get_direction()
@@ -43,7 +49,18 @@ void CGameObject::draw(cv::Mat& im)
 
 void CGameObject::move()
 {
-	// Update the position based on velocity
+	// Update velocity based on acceleration
+	_velocity += _acceleration;
+
+	// Cap maximum velocity
+	float max_speed = 10.0f;
+	float speed = sqrt(_velocity.x * _velocity.x + _velocity.y * _velocity.y);
+	if (speed > max_speed)
+	{
+		_velocity = (_velocity / speed) * max_speed;
+	}
+
+	// Update position based on velocity
 	_position += _velocity;
 }
 
@@ -97,3 +114,37 @@ int CGameObject::get_lives()
 	return _lives;
 }
 
+void CGameObject::apply_thrust(cv::Point2f direction)
+{
+	float magnitude = sqrt(direction.x * direction.x + direction.y * direction.y);
+
+	if (magnitude > 2.0f)  // Only apply thrust if joystick moved significantly
+	{
+		_thrusting = true;
+		_facing_direction = cv::Point2f(direction.x / magnitude, direction.y / magnitude);
+
+		// Apply acceleration in the direction of thrust
+		float thrust_power = 0.5f;  // Adjust this value to control acceleration
+		_acceleration = _facing_direction * thrust_power;
+	}
+	else
+	{
+		_thrusting = false;
+		_acceleration = cv::Point2f(0, 0);
+	}
+}
+
+void CGameObject::apply_drag()
+{
+	// Apply drag to slow down the ship
+	_velocity *= _drag;
+
+	// Stop completely if velocity is very small
+	if (abs(_velocity.x) < 0.1f) _velocity.x = 0;
+	if (abs(_velocity.y) < 0.1f) _velocity.y = 0;
+}
+
+bool CGameObject::is_thrusting() const
+{
+	return _thrusting;
+}
